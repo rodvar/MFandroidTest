@@ -24,6 +24,8 @@ import com.rodvar.mfandroidtest.model.IBaseModel;
 import com.rodvar.mfandroidtest.model.Venue;
 
 import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,6 +108,7 @@ public class CoffeeListActivity extends ActionBarActivity implements LocationLis
             @Override
             public void done(IBaseModel object) {
                 List<Venue> venues = (List<Venue>) object;
+                Collections.sort(venues);
                 coffeeShopAdapter.reset(venues);
             }
 
