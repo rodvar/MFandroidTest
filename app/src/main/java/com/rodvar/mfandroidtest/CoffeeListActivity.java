@@ -18,6 +18,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.rodvar.mfandroidtest.adapter.CoffeeShopAdapter;
+import com.rodvar.mfandroidtest.backend.CallMeBack;
+import com.rodvar.mfandroidtest.backend.task.SearchTask;
+import com.rodvar.mfandroidtest.model.IBaseModel;
 import com.rodvar.mfandroidtest.model.Venue;
 
 import java.text.DateFormat;
@@ -27,6 +30,10 @@ import java.util.List;
 
 
 public class CoffeeListActivity extends ActionBarActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private static final String LAT_KEY = "##LAT##";
+    private static final String LON_KEY = "##LON##";
+    private static final String BASE_URL = "https://api.foursquare.com/v2/venues/search?client_id=ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G&client_secret=YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL&v=20130815&ll=" + LAT_KEY + "," + LON_KEY + "&query=coffee";
 
     private static final long LOCATION_INTERVAL = 10000l;
     private static final long LOCATION_FASTEST_INTERVAL = 5000l;
@@ -94,8 +101,22 @@ public class CoffeeListActivity extends ActionBarActivity implements LocationLis
     public void onLocationChanged(Location location) {
         currentLocation = location;
         lastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Toast.makeText(this, "OK!", Toast.LENGTH_SHORT).show();
-        // TODO update
+        new SearchTask(new CallMeBack() {
+            @Override
+            public void done(IBaseModel object) {
+                List<Venue> venues = (List<Venue>) object;
+                Toast.makeText(CoffeeListActivity.this, venues.get(0).getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError() {
+                Toast.makeText(CoffeeListActivity.this, "ERROR on call!", Toast.LENGTH_SHORT).show();
+            }
+        }, this.buildURL()).execute((String[]) null);
+    }
+
+    private String buildURL() {
+        return BASE_URL.replace(LAT_KEY, String.valueOf(this.currentLocation.getLatitude())).replace(LON_KEY, String.valueOf(this.currentLocation.getLongitude()));
     }
 
     @Override
