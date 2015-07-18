@@ -33,7 +33,8 @@ public class CoffeeListActivity extends ActionBarActivity implements LocationLis
 
     private static final String LAT_KEY = "##LAT##";
     private static final String LON_KEY = "##LON##";
-    private static final String BASE_URL = "https://api.foursquare.com/v2/venues/search?client_id=ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G&client_secret=YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL&v=20130815&ll=" + LAT_KEY + "," + LON_KEY + "&query=coffee";
+    private static final String LIMIT = "8";
+    private static final String BASE_URL = "https://api.foursquare.com/v2/venues/search?client_id=ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G&client_secret=YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL&v=20130815&ll=" + LAT_KEY + "," + LON_KEY + "&query=coffee&limit=" + LIMIT;
 
     private static final long LOCATION_INTERVAL = 10000l;
     private static final long LOCATION_FASTEST_INTERVAL = 5000l;
@@ -53,7 +54,7 @@ public class CoffeeListActivity extends ActionBarActivity implements LocationLis
         this.createLocationRequest();
         setContentView(R.layout.activity_coffee_list);
         ListView listView = (ListView) this.findViewById(R.id.shopList);
-        this.coffeeShopAdapter = new CoffeeShopAdapter(this, fakeList());
+        this.coffeeShopAdapter = new CoffeeShopAdapter(this);
         listView.setAdapter(this.coffeeShopAdapter);
     }
 
@@ -105,7 +106,7 @@ public class CoffeeListActivity extends ActionBarActivity implements LocationLis
             @Override
             public void done(IBaseModel object) {
                 List<Venue> venues = (List<Venue>) object;
-                Toast.makeText(CoffeeListActivity.this, venues.get(0).getName(), Toast.LENGTH_SHORT).show();
+                coffeeShopAdapter.reset(venues);
             }
 
             @Override

@@ -44,7 +44,7 @@ public class CoffeeShopAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(this.venues.get(position).getId());
+        return position;
     }
 
     @Override
